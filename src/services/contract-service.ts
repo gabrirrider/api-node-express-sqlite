@@ -15,6 +15,20 @@ export class ContractService {
         }
     }
 
+    public async getContractsByClient(clienteId: number): Promise<Contract[]> {
+        try {
+            const contracts = await Contract.findAll({
+                where: {
+                    clienteId: clienteId
+                }
+            });
+
+            return contracts;
+        } catch (error) {
+            throw new Error(`Failed to retrieve contracts for client: ${error}`);
+        }
+    }
+
     public async getAllContracts(): Promise<Contract[]> {
         try {
             return await Contract.findAll();

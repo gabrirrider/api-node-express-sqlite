@@ -1,4 +1,7 @@
+import Contract from "../models/contract-model";
+import Job from "../models/job-model";
 import Payment from "../models/payment-model";
+import Profile from "../models/profile-model";
 
 
 export class PaymentService {
@@ -13,6 +16,53 @@ export class PaymentService {
             } else {
                 throw new Error('an unknow erro ocurred.')
             }
+        }
+    }
+
+    public async createJobPayment(jobId: number): Promise<Payment> {
+        try {
+            const payment = await Payment.create({
+                jobId,
+                paymentValue: 0,
+                operationDate: new Date()
+            });
+
+            const job = await Job.findOne({ where: { id: jobId } });
+            if (!job) {
+                throw new Error(`Profile with ID ${jobId} not found.`);
+            }
+
+            payment.paymentValue = job.price;
+
+
+            const contract = await Contract.findOne({ where: { id: job.contractId } });
+            if (!contract) {
+                throw new Error(`Profile with ID ${job.contractId} not found.`);
+            }
+
+            const client = await Profile.findOne({ where: { id: contract.clienteId } });
+            if (!client) {
+                throw new Error(`Profile with ID ${contract.clienteId} not found.`);
+            }
+
+            const contractor = await Profile.findOne({ where: { id: contract.contractorId } });
+            if (!contractor) {
+                throw new Error(`Profile with ID ${contract.clienteId} not found.`);
+            }
+
+            client.balance -= payment.paymentValue;
+            await client.save();
+
+            contractor.balance += payment.paymentValue;
+            await contractor.save();
+
+            job.paymentDate = payment.operationDate;
+            job.paid = true;
+            await job.save();
+
+            return payment;
+        } catch (error) {
+            throw new Error(`Failed to create payment: ${error}`);
         }
     }
 

@@ -2,7 +2,21 @@ import Deposit from "../models/deposit-model";
 import Profile from "../models/profile-model";
 
 export class DepositService {
-    public async createDeposit(clienteId: number, depositValue: number): Promise<Deposit> {
+    public async createDeposit(clienteId: number, operationDate: Date, depositValue: number): Promise<Deposit> {
+        try {
+            const deposit = await Deposit.create({ clienteId, operationDate, depositValue });
+            return deposit
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`unable to create deposit: ${error.message}`);
+
+            } else {
+                throw new Error('an unknow erro ocurred.')
+            }
+        }
+    }
+
+    public async createSimpleDeposit(clienteId: number, depositValue: number): Promise<Deposit> {
         try {
             if (depositValue < 0) {
                 throw new Error("Deposit amount must be positive.");

@@ -11,13 +11,14 @@ export class JobController {
     public async createJob(req: Request, res: Response): Promise<Response> {
         try {
             const { contractId, description, operationDate, paymentDate, price, paid } = req.body;
-            const newJob = await this.jobService.createJob(contractId, description, operationDate, paymentDate, price, paid);
+            const newJob = await this.jobService.createJob(contractId, description, operationDate, paymentDate ?? null, price, paid ?? false);
 
             return res.status(201).json(newJob);
         } catch (error) {
             return res.status(500).json({ message: "Failed to create job", error });
         }
     }
+
     public async getAllJobs(req: Request, res: Response): Promise<Response> {
 
         try {
@@ -27,9 +28,10 @@ export class JobController {
             return res.status(500).json({ message: "Failed to fetch jobs", error });
         }
     }
+
     public async getJobsByContract(req: Request, res: Response): Promise<Response> {
         try {
-            const contractId = parseInt(req.params.contractId, 10); // Pega o ID do contrato da URL
+            const contractId = parseInt(req.params.contractId, 10);
             if (isNaN(contractId)) {
                 return res.status(400).json({ message: 'Invalid contract ID' });
             }

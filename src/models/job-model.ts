@@ -6,7 +6,7 @@ interface JobAttributes {
     contractId: number;
     description: string;
     operationDate: Date;
-    paymentDate: Date;
+    paymentDate: Date | null;
     price: number;
     paid: boolean;
 }
@@ -51,7 +51,8 @@ export class Job extends Model<JobAttributes, JobCreationAttributes>
                 },
                 paymentDate: {
                     type: DataTypes.DATE,
-                    allowNull: false,
+                    allowNull: true,
+                    defaultValue: null
                 },
                 price: {
                     type: DataTypes.DOUBLE,

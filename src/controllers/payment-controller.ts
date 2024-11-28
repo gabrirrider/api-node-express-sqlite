@@ -18,6 +18,18 @@ export class PaymentController {
             return res.status(500).json({ message: "Failed to create payment", error });
         }
     }
+
+    public async createJobPayment(req: Request, res: Response): Promise<Response> {
+        const jobId = parseInt(req.body);
+
+        try {
+            const payment = await this.paymentService.createJobPayment(jobId);
+            return res.status(201).json(payment);
+        } catch (error) {
+            return res.status(500).json({ message: "Failed to create payment", error });
+        }
+    }
+
     public async getAllPayments(req: Request, res: Response): Promise<Response> {
 
         try {
