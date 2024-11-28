@@ -19,11 +19,11 @@ export class PaymentService {
         }
     }
 
-    public async createJobPayment(jobId: number): Promise<Payment> {
+    public async createJobPayment(jobId: number, paymentValue: number): Promise<Payment> {
         try {
             const payment = await Payment.create({
                 jobId,
-                paymentValue: 0,
+                paymentValue,
                 operationDate: new Date()
             });
 
@@ -31,9 +31,6 @@ export class PaymentService {
             if (!job) {
                 throw new Error(`Profile with ID ${jobId} not found.`);
             }
-
-            payment.paymentValue = job.price;
-
 
             const contract = await Contract.findOne({ where: { id: job.contractId } });
             if (!contract) {
@@ -50,15 +47,20 @@ export class PaymentService {
                 throw new Error(`Profile with ID ${contract.contractorId} not found.`);
             }
 
-            client.balance -= payment.paymentValue;
+            client.balance -= paymentValue;
             await client.save();
 
-            contractor.balance += payment.paymentValue;
+            contractor.balance += paymentValue;
             await contractor.save();
 
-            job.paymentDate = payment.operationDate;
-            job.paid = true;
+            job.price -= paymentValue;
             await job.save();
+
+            if (paymentValue >= job.price) {
+                job.paymentDate = payment.operationDate;
+                job.paid = true;
+                await job.save();
+            }
 
             return payment;
         } catch (error) {

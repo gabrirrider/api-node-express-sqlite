@@ -42,6 +42,21 @@ export class JobService {
         }
     }
 
+    public async getUnpaidJobsByContract(contractId: number): Promise<Job[]> {
+        try {
+            const jobs = await Job.findAll({
+                where: {
+                    contractId: contractId,
+                    paid: false
+                }
+            });
+
+            return jobs;
+        } catch (error) {
+            throw new Error(`Failed to retrieve jobs for contract: ${error}`);
+        }
+    }
+
     public async getUnpaidJobsTotal(): Promise<number> {
         try {
             const result = await Job.sum('price', { where: { paid: false } });

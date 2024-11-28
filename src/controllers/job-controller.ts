@@ -43,6 +43,20 @@ export class JobController {
         }
     }
 
+    public async getUnpaidJobsByContract(req: Request, res: Response): Promise<Response> {
+        try {
+            const contractId = parseInt(req.params.contractId, 10);
+            if (isNaN(contractId)) {
+                return res.status(400).json({ message: 'Invalid contract ID' });
+            }
+
+            const jobs = await this.jobService.getUnpaidJobsByContract(contractId);
+            return res.status(200).json(jobs);
+        } catch (error) {
+            return res.status(500).json({ message: "Failed to fetch jobs by contract", error });
+        }
+    }
+
     public async getUnpaidJobsTotal(req: Request, res: Response): Promise<Response> {
         try {
             const total = await this.jobService.getUnpaidJobsTotal();

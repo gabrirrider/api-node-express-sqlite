@@ -20,14 +20,15 @@ export class PaymentController {
     }
 
     public async createJobPayment(req: Request, res: Response): Promise<Response> {
-        const jobId = parseInt(req.body.jobId);
+        const jobId = parseInt(req.params.jobId, 10);
+        const paymentValue = parseFloat(req.body.paymentValue);
 
         if (isNaN(jobId)) {
             return res.status(400).json({ message: "Invalid jobId" });
         }
 
         try {
-            const payment = await this.paymentService.createJobPayment(jobId);
+            const payment = await this.paymentService.createJobPayment(jobId, paymentValue);
             return res.status(201).json(payment);
         } catch (error) {
             return res.status(500).json({ message: "Failed to create payment", error });
