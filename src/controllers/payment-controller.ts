@@ -20,7 +20,11 @@ export class PaymentController {
     }
 
     public async createJobPayment(req: Request, res: Response): Promise<Response> {
-        const jobId = parseInt(req.body);
+        const jobId = parseInt(req.body.jobId);
+
+        if (isNaN(jobId)) {
+            return res.status(400).json({ message: "Invalid jobId" });
+        }
 
         try {
             const payment = await this.paymentService.createJobPayment(jobId);

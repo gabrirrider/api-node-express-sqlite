@@ -47,7 +47,7 @@ export class PaymentService {
 
             const contractor = await Profile.findOne({ where: { id: contract.contractorId } });
             if (!contractor) {
-                throw new Error(`Profile with ID ${contract.clienteId} not found.`);
+                throw new Error(`Profile with ID ${contract.contractorId} not found.`);
             }
 
             client.balance -= payment.paymentValue;
