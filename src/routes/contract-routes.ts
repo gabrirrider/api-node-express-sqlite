@@ -8,8 +8,8 @@ const contractController = new ContractController();
 router.post("/contracts", async (req, res) => contractController.createContract(req, res));
 //retorna todos os contracts
 router.get("/contracts", (req, res) => contractController.getAllContracts(req, res));
-//retorna todos os jobs do contract do parâmetro :clienteId
-router.get('/contract/client/:clienteId', (req, res) => contractController.getContractsByClient(req, res));
+//retorna todos os jobs do contract do profile do parâmetro :profileId
+router.get('/contract/profile/:profileId', (req, res) => contractController.getContractsByProfile(req, res));
 
 type contractRoutes = typeof router;
 

@@ -1,4 +1,6 @@
 import Contract from "../models/contract-model";
+import { Op } from 'sequelize';
+
 
 export class ContractService {
     public async createContract(terms: string, clienteId: number, contractorId: number, operationDate: Date, status: string): Promise<Contract> {
@@ -15,11 +17,14 @@ export class ContractService {
         }
     }
 
-    public async getContractsByClient(clienteId: number): Promise<Contract[]> {
+    public async getContractsByProfile(profileId: number): Promise<Contract[]> {
         try {
             const contracts = await Contract.findAll({
                 where: {
-                    clienteId: clienteId
+                    [Op.or]: [
+                        { contractorId: profileId },
+                        { clienteId: profileId }
+                    ]
                 }
             });
 
